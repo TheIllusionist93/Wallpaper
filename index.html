@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>365 Days Wallpaper</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #000 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 40px;
+        }
+        .card {
+            background: #1f1f1f;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .api-url {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 15px 0;
+            border: 2px solid #ff6b35;
+            font-size: 0.9rem;
+        }
+        .button {
+            display: inline-block;
+            background: #ff6b35;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-right: 10px;
+        }
+        .button:hover {
+            background: #ff8555;
+        }
+        .button-secondary {
+            background: #444;
+        }
+        .button-secondary:hover {
+            background: #555;
+        }
+        .preview-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .preview {
+            max-width: 234px;
+            border-radius: 24px;
+            border: 4px solid #333;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .info-item {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .info-label {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        .info-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff6b35;
+        }
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+        ol {
+            padding-left: 20px;
+        }
+        ol li {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        canvas {
+            display: none;
+        }
+        .success {
+            background: #22c55e;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📅 365 Days Wallpaper</h1>
+        <p class="subtitle">Automatisches iPhone Hintergrund-Update</p>
+
+        <div class="card">
+            <h2 style="margin-bottom: 15px;">🔗 Deine Wallpaper-URL</h2>
+            <p style="color: #aaa; margin-bottom: 10px;">
+                Nutze diese URL in iOS Shortcuts:
+            </p>
+            <div class="api-url" id="apiUrl">Wird geladen...</div>
+            <button class="button" id="copyBtn">URL kopieren</button>
+            <button class="button button-secondary" id="downloadBtn">Bild herunterladen</button>
+        </div>
+
+        <div class="card">
+            <h2 style="margin-bottom: 15px;">📱 Live-Vorschau</h2>
+            <div class="preview-container">
+                <img id="preview" class="preview" alt="Wallpaper Preview">
+            </div>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: #fff;"></div>
+                    <span>Vergangene Tage</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: #ff6b35;"></div>
+                    <span>Heute</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: #333;"></div>
+                    <span>Zukünftige Tage</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 style="margin-bottom: 15px;">📊 Jahresfortschritt</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Tag im Jahr</div>
+                    <div class="info-value" id="dayOfYear">-</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Tage übrig</div>
+                    <div class="info-value" id="daysLeft">-</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Fortschritt</div>
+                    <div class="info-value" id="progress">-</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 style="margin-bottom: 15px;">⚙️ iOS Shortcuts einrichten</h2>
+            <ol>
+                <li>Öffne die <strong>Shortcuts</strong> App</li>
+                <li>Erstelle eine neue <strong>Automation</strong></li>
+                <li>Wähle <strong>"Bestimmte Uhrzeit"</strong> (z.B. 00:01 Uhr)</li>
+                <li>Füge <strong>"URL-Inhalt laden"</strong> hinzu</li>
+                <li>Kopiere die obige URL</li>
+                <li>Füge <strong>"Bild aus Eingabe"</strong> hinzu</li>
+                <li>Füge <strong>"Fotos sichern"</strong> hinzu</li>
+                <li>Deaktiviere <strong>"Vor Ausführung fragen"</strong></li>
+            </ol>
+            <p style="margin-top: 15px; color: #aaa; font-size: 0.9rem;">
+                💡 <strong>Hinweis:</strong> Das Bild wird täglich automatisch in deinen Fotos gespeichert. 
+                Du musst es dann manuell als Hintergrund setzen, da iOS keine vollautomatische Hintergrund-Änderung erlaubt.
+            </p>
+        </div>
+    </div>
+
+    <canvas id="wallpaperCanvas"></canvas>
+
+    <script>
+        function generateWallpaper() {
+            var canvas = document.getElementById('wallpaperCanvas');
+            var ctx = canvas.getContext('2d');
+            
+            canvas.width = 1170;
+            canvas.height = 2532;
+
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            var now = new Date();
+            var start = new Date(now.getFullYear(), 0, 1);
+            var diff = now - start;
+            var oneDay = 1000 * 60 * 60 * 24;
+            var dayOfYear = Math.floor(diff / oneDay) + 1;
+            var year = now.getFullYear();
+            var isLeap = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+            var daysInYear = isLeap ? 366 : 365;
+
+            var cols = 21;
+            var rows = 18;
+            var dotSize = 16;
+            var spacing = 44;
+            
+            var gridWidth = (cols - 1) * spacing + dotSize;
+            var gridHeight = (rows - 1) * spacing + dotSize;
+            var startX = (canvas.width - gridWidth) / 2;
+            var startY = (canvas.height - gridHeight) / 2 - 150;
+
+            for (var i = 0; i < daysInYear; i++) {
+                var row = Math.floor(i / cols);
+                var col = i % cols;
+                
+                var x = startX + col * spacing + dotSize / 2;
+                var y = startY + row * spacing + dotSize / 2;
+
+                ctx.beginPath();
+                ctx.arc(x, y, dotSize / 2, 0, Math.PI * 2);
+
+                if (i < dayOfYear - 1) {
+                    ctx.fillStyle = '#ffffff';
+                } else if (i === dayOfYear - 1) {
+                    ctx.fillStyle = '#ff6b35';
+                } else {
+                    ctx.fillStyle = '#333333';
+                }
+                
+                ctx.fill();
+            }
+
+            var daysLeft = daysInYear - dayOfYear;
+            var percentage = Math.round((dayOfYear / daysInYear) * 100);
+
+            ctx.fillStyle = '#ff6b35';
+            ctx.font = 'bold 72px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(daysLeft + 'd left', canvas.width / 2, canvas.height - 250);
+
+            ctx.fillStyle = '#666666';
+            ctx.font = '48px sans-serif';
+            ctx.fillText(percentage + '%', canvas.width / 2, canvas.height - 170);
+
+            ctx.fillStyle = '#444444';
+            ctx.font = 'bold 40px sans-serif';
+            ctx.fillText(year + '', canvas.width / 2, canvas.height - 80);
+
+            return canvas.toDataURL('image/png');
+        }
+
+        function updateInfo() {
+            var now = new Date();
+            var start = new Date(now.getFullYear(), 0, 1);
+            var diff = now - start;
+            var oneDay = 1000 * 60 * 60 * 24;
+            var dayOfYear = Math.floor(diff / oneDay) + 1;
+            var year = now.getFullYear();
+            var isLeap = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+            var daysInYear = isLeap ? 366 : 365;
+            var daysLeft = daysInYear - dayOfYear;
+            var percentage = Math.round((dayOfYear / daysInYear) * 100);
+
+            document.getElementById('dayOfYear').textContent = dayOfYear;
+            document.getElementById('daysLeft').textContent = daysLeft;
+            document.getElementById('progress').textContent = percentage + '%';
+        }
+
+        function init() {
+            var dataUrl = generateWallpaper();
+            document.getElementById('preview').src = dataUrl;
+            updateInfo();
+            document.getElementById('apiUrl').textContent = window.location.href;
+        }
+
+        document.getElementById('copyBtn').addEventListener('click', function() {
+            var url = window.location.href;
+            var btn = document.getElementById('copyBtn');
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(function() {
+                    var original = btn.innerHTML;
+                    btn.innerHTML = '✓ Kopiert!';
+                    setTimeout(function() {
+                        btn.innerHTML = original;
+                    }, 2000);
+                });
+            }
+        });
+
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            var canvas = document.getElementById('wallpaperCanvas');
+            var link = document.createElement('a');
+            var now = new Date();
+            var dateStr = now.toISOString().split('T')[0];
+            link.download = 'wallpaper-' + dateStr + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
