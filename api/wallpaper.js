@@ -2,7 +2,7 @@ export const config = {
   runtime: 'edge',
 };
 
-export default function handler() {
+export default async function handler(request) {
   const now = new Date();
   const start = new Date(now.getFullYear(), 0, 1);
   const diff = now - start;
@@ -48,9 +48,19 @@ export default function handler() {
   <text x="585" y="2452" font-family="Arial,sans-serif" font-size="40" font-weight="bold" fill="#444444" text-anchor="middle">${year}</text>
 </svg>`;
 
-  return new Response(svg, {
+  // SVG zu Base64 kodieren
+  const svgBase64 = btoa(unescape(encodeURIComponent(svg)));
+  
+  // Cloudflare's Image Resizing API nutzen (kostenlos!)
+  const imageUrl = `https://images.weserv.nl/?url=data:image/svg+xml;base64,${svgBase64}&w=1170&h=2532&output=png`;
+  
+  // Das generierte PNG abrufen und zurückgeben
+  const response = await fetch(imageUrl);
+  const imageBuffer = await response.arrayBuffer();
+  
+  return new Response(imageBuffer, {
     headers: {
-      'Content-Type': 'image/svg+xml',
+      'Content-Type': 'image/png',
       'Cache-Control': 'public, max-age=3600',
     },
   });
