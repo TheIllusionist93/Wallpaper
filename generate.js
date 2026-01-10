@@ -26,7 +26,7 @@ const CONFIG = {
   
   // Position (vertikal)
   position: {
-    verticalOffset: -30,         // Verschiebung nach oben (-) oder unten (+)
+    verticalOffset: +30,         // Verschiebung nach oben (-) oder unten (+)
   },
   
   // Fortschrittsbalken
