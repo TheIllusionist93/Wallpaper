@@ -1,5 +1,3 @@
-import { ImageResponse } from '@vercel/og';
-
 export const config = {
   runtime: 'edge',
 };
@@ -23,12 +21,12 @@ export default function handler() {
   const startX = (1170 - gridWidth) / 2;
   const startY = 400;
 
-  const dots = [];
+  let dots = '';
   for (let i = 0; i < daysInYear; i++) {
     const row = Math.floor(i / cols);
     const col = i % cols;
-    const x = startX + col * spacing;
-    const y = startY + row * spacing;
+    const x = startX + col * spacing + dotSize / 2;
+    const y = startY + row * spacing + dotSize / 2;
     
     let color;
     if (i < dayOfYear - 1) {
@@ -39,80 +37,21 @@ export default function handler() {
       color = '#333333';
     }
     
-    dots.push({ x, y, color });
+    dots += `<circle cx="${x}" cy="${y}" r="${dotSize / 2}" fill="${color}"/>`;
   }
 
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          height: '100%',
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          backgroundColor: '#000',
-          position: 'relative',
-        }}
-      >
-        {dots.map((dot, i) => (
-          <div
-            key={i}
-            style={{
-              position: 'absolute',
-              left: dot.x,
-              top: dot.y,
-              width: dotSize,
-              height: dotSize,
-              borderRadius: dotSize / 2,
-              backgroundColor: dot.color,
-            }}
-          />
-        ))}
+  const svg = `<svg width="1170" height="2532" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1170" height="2532" fill="#000000"/>
+  ${dots}
+  <text x="585" y="2282" font-family="Arial,sans-serif" font-size="72" font-weight="bold" fill="#ff6b35" text-anchor="middle">${daysLeft}d left</text>
+  <text x="585" y="2362" font-family="Arial,sans-serif" font-size="48" fill="#666666" text-anchor="middle">${percentage}%</text>
+  <text x="585" y="2452" font-family="Arial,sans-serif" font-size="40" font-weight="bold" fill="#444444" text-anchor="middle">${year}</text>
+</svg>`;
 
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 250,
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <div
-            style={{
-              fontSize: 72,
-              fontWeight: 'bold',
-              color: '#ff6b35',
-            }}
-          >
-            {daysLeft}d left
-          </div>
-          <div
-            style={{
-              fontSize: 48,
-              color: '#666',
-              marginTop: 20,
-            }}
-          >
-            {percentage}%
-          </div>
-          <div
-            style={{
-              fontSize: 40,
-              fontWeight: 'bold',
-              color: '#444',
-              marginTop: 30,
-            }}
-          >
-            {year}
-          </div>
-        </div>
-      </div>
-    ),
-    {
-      width: 1170,
-      height: 2532,
-    }
-  );
+  return new Response(svg, {
+    headers: {
+      'Content-Type': 'image/svg+xml',
+      'Cache-Control': 'public, max-age=3600',
+    },
+  });
 }
