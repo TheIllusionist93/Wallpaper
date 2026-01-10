@@ -10,24 +10,24 @@ const dayOfYear = Math.floor(diff / oneDay) + 1;
 const year = now.getFullYear();
 const isLeap = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
 const daysInYear = isLeap ? 366 : 365;
-const daysLeft = daysInYear - dayOfYear;
 const percentage = Math.round((dayOfYear / daysInYear) * 100);
 
 // Canvas erstellen
 const canvas = createCanvas(1170, 2532);
 const ctx = canvas.getContext('2d');
 
-// Hintergrund
-ctx.fillStyle = '#000000';
+// Heller Hintergrund (cremeweiß/beige)
+ctx.fillStyle = '#f5f5f0';
 ctx.fillRect(0, 0, 1170, 2532);
 
-// Grid Setup
+// Grid Setup - zentriert in der Mitte des Bildschirms
 const cols = 21;
-const dotSize = 16;
-const spacing = 44;
+const dotSize = 14;
+const spacing = 42;
 const gridWidth = (cols - 1) * spacing + dotSize;
+const gridHeight = 17 * spacing + dotSize;
 const startX = (1170 - gridWidth) / 2;
-const startY = 400;
+const startY = (2532 - gridHeight) / 2 - 50; // Leicht nach oben für bessere Zentrierung
 
 // Punkte zeichnen
 for (let i = 0; i < daysInYear; i++) {
@@ -41,33 +41,42 @@ for (let i = 0; i < daysInYear; i++) {
   ctx.arc(x, y, dotSize / 2, 0, Math.PI * 2);
 
   if (i < dayOfYear - 1) {
-    ctx.fillStyle = '#ffffff';
+    // Vergangene Tage - dunkelgrau
+    ctx.fillStyle = '#2d2d2d';
   } else if (i === dayOfYear - 1) {
-    ctx.fillStyle = '#ff6b35';
+    // Heutiger Tag - schönes Grün
+    ctx.fillStyle = '#4ade80';
   } else {
-    ctx.fillStyle = '#333333';
+    // Zukünftige Tage - sehr hell
+    ctx.fillStyle = '#d4d4d4';
   }
   
   ctx.fill();
 }
 
-// Text unten
-ctx.fillStyle = '#ff6b35';
-ctx.font = 'bold 72px Arial';
+// Fortschrittsbalken (optional - minimalistisch)
+const barWidth = gridWidth;
+const barHeight = 4;
+const barX = startX;
+const barY = startY + gridHeight + 40;
+
+// Hintergrund des Balkens
+ctx.fillStyle = '#e5e5e5';
+ctx.fillRect(barX, barY, barWidth, barHeight);
+
+// Fortschritt des Balkens
+ctx.fillStyle = '#4ade80';
+ctx.fillRect(barX, barY, (barWidth * percentage) / 100, barHeight);
+
+// Jahr unten - dezent
+ctx.fillStyle = '#9ca3af';
+ctx.font = '32px Arial';
 ctx.textAlign = 'center';
-ctx.fillText(`${daysLeft}d left`, 585, 2282);
-
-ctx.fillStyle = '#666666';
-ctx.font = '48px Arial';
-ctx.fillText(`${percentage}%`, 585, 2362);
-
-ctx.fillStyle = '#444444';
-ctx.font = 'bold 40px Arial';
-ctx.fillText(year.toString(), 585, 2452);
+ctx.fillText(year.toString(), 585, barY + 60);
 
 // Als PNG speichern
 const buffer = canvas.toBuffer('image/png');
 fs.writeFileSync('wallpaper.png', buffer);
 
 console.log('Wallpaper generated successfully!');
-console.log(`Day ${dayOfYear} of ${daysInYear} - ${daysLeft} days left (${percentage}%)`);
+console.log(`Day ${dayOfYear} of ${daysInYear} - ${percentage}% complete`);
