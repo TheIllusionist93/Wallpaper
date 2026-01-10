@@ -1,5 +1,8 @@
 {
   "name": "wallpaper-generator",
   "version": "1.0.0",
-  "type": "module"
+  "type": "commonjs",
+  "dependencies": {
+    "canvas": "^2.11.2"
+  }
 }
