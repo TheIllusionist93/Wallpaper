@@ -1,83 +1,63 @@
-name: Update Designs from Issue
+name: Update Designs from File
 
 on:
-  issues:
-    types: [opened]
+  push:
+    paths:
+      - 'designs.json'
+  workflow_dispatch:
 
 jobs:
-  update-designs:
-    if: contains(github.event.issue.title, '[DESIGN UPDATE]')
+  update-generate-js:
     runs-on: ubuntu-latest
     
     permissions:
       contents: write
-      issues: write
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
       
-    - name: Extract design code from issue
-      id: extract
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        
+    - name: Update generate.js from designs.json
       run: |
-        # Extract code block from issue body
-        ISSUE_BODY="${{ github.event.issue.body }}"
+        node << 'EOF'
+        const fs = require('fs');
         
-        # Find content between ```javascript and ```
-        CODE=$(echo "$ISSUE_BODY" | sed -n '/```javascript/,/```/p' | sed '1d;$d')
+        // Read designs.json
+        const designs = JSON.parse(fs.readFileSync('designs.json', 'utf8'));
         
-        # Save to file
-        echo "$CODE" > designs_temp.txt
+        // Read current generate.js
+        let generateJs = fs.readFileSync('generate.js', 'utf8');
         
-    - name: Update generate.js
-      run: |
-        # Read the new designs code
-        NEW_DESIGNS=$(cat designs_temp.txt)
+        // Find and replace the DESIGNS object
+        const designsString = JSON.stringify(designs, null, 2);
+        const newDesignsBlock = `const DESIGNS = ${designsString};`;
         
-        # Create a temporary file with updated content
-        awk '
-          /^const DESIGNS = {/ { 
-            print
-            system("cat designs_temp.txt")
-            skip=1
-            next
-          }
-          /^};/ && skip { 
-            print
-            skip=0
-            next
-          }
-          !skip { print }
-        ' generate.js > generate_new.js
+        // Replace between "const DESIGNS = {" and the closing "};"
+        const regex = /const DESIGNS = \{[\s\S]*?\n\};/;
+        generateJs = generateJs.replace(regex, newDesignsBlock);
         
-        # Replace old file
-        mv generate_new.js generate.js
-        rm designs_temp.txt
+        // Write back
+        fs.writeFileSync('generate.js', generateJs);
+        console.log('✅ generate.js updated successfully!');
+        EOF
         
-    - name: Commit and push changes
+    - name: Commit changes
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         git add generate.js
-        git commit -m "Update designs from issue #${{ github.event.issue.number }}"
+        git diff --quiet && git diff --staged --quiet || git commit -m "Update generate.js from designs.json"
         git push
         
     - name: Trigger wallpaper generation
-      uses: peter-evans/repository-dispatch@v2
-      with:
-        event-type: generate-wallpapers
-        
-    - name: Close issue with success message
-      uses: peter-evans/close-issue@v3
-      with:
-        comment: |
-          ✅ **Designs erfolgreich aktualisiert!**
-          
-          Die neuen Designs wurden in `generate.js` gespeichert und die Wallpaper-Generierung wurde gestartet.
-          
-          In wenigen Minuten sind die neuen Wallpapers verfügbar unter:
-          ```
-          https://raw.githubusercontent.com/${{ github.repository }}/main/wallpaper-DESIGNNAME.png
-          ```
-          
-          🎨 Deine Änderungen sind live!
+      run: |
+        curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/${{ github.repository }}/actions/workflows/generate-wallpaper.yml/dispatches \
+          -d '{"ref":"main"}'
