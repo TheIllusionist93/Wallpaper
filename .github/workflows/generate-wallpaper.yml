@@ -24,13 +24,13 @@ jobs:
       run: |
         npm install canvas
         
-    - name: Generate wallpaper
+    - name: Generate wallpapers
       run: node generate.js
       
-    - name: Commit and push wallpaper
+    - name: Commit and push wallpapers
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        git add wallpaper.png
-        git diff --quiet && git diff --staged --quiet || git commit -m "Update wallpaper $(date +'%Y-%m-%d')"
+        git add wallpaper*.png
+        git diff --quiet && git diff --staged --quiet || git commit -m "Update wallpapers $(date +'%Y-%m-%d')"
         git push
