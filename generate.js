@@ -129,7 +129,7 @@ const DESIGNS = {
   "minimal": {
     "name": "Pure Black & White",
     "colors": {
-      "background": "#000000",
+      "background": "#ffffff",
       "pastDays": "#000000",
       "today": "#ef4444",
       "futureDays": "#e5e5e5",
