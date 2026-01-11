@@ -53,8 +53,11 @@
                 <button onclick="addNewDesign()" class="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-semibold">
                     <span>+</span> Neues Design
                 </button>
+                <button onclick="exportToGitHub()" class="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg font-semibold">
+                    🚀 Zu GitHub senden
+                </button>
                 <button onclick="exportCode()" class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold">
-                    📋 Code exportieren
+                    📋 Code kopieren
                 </button>
             </div>
         </div>
@@ -139,7 +142,7 @@
                 </div>
 
                 <button onclick="saveCurrentDesign()" class="w-full py-3 bg-green-600 hover:bg-green-700 rounded-lg font-semibold">
-                    ✓ Design speichern
+                    ✓ Design speichern (lokal)
                 </button>
             </div>
 
@@ -161,11 +164,24 @@
                 <p class="text-center text-gray-400 text-sm mt-4">
                     iPhone Format (1170 × 2532 px)
                 </p>
+                
+                <!-- GitHub Integration Info -->
+                <div class="mt-6 p-4 bg-purple-900/30 border border-purple-500/50 rounded-lg">
+                    <h3 class="font-semibold mb-2 flex items-center gap-2">
+                        🚀 GitHub Integration
+                    </h3>
+                    <p class="text-sm text-gray-300">
+                        Klicke auf "Zu GitHub senden" um deine Designs automatisch zu aktualisieren. 
+                        Ein GitHub Issue wird geöffnet, das die Änderungen automatisch einpflegt.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        const GITHUB_REPO = 'TheIllusionist93/Wallpaper'; // Ändere das zu deinem Repo
+        
         let designs = {
             light: {
                 name: 'Light & Minimalistic',
@@ -350,7 +366,7 @@
 
         function saveCurrentDesign() {
             designs[currentDesign] = JSON.parse(JSON.stringify(currentConfig));
-            alert('✓ Design gespeichert!');
+            alert('✓ Design lokal gespeichert! Klicke auf "Zu GitHub senden" um es dauerhaft zu speichern.');
         }
 
         function addNewDesign() {
@@ -362,9 +378,32 @@
         }
 
         function exportCode() {
-            const code = `const DESIGNS = ${JSON.stringify(designs, null, 2)};`;
+            const code = JSON.stringify(designs, null, 2);
             navigator.clipboard.writeText(code);
-            alert('✓ Code in Zwischenablage kopiert!\n\nFüge ihn in generate.js ein (Zeile 10).');
+            alert('✓ Design-Code in Zwischenablage kopiert!');
+        }
+
+        function exportToGitHub() {
+            const designsCode = JSON.stringify(designs, null, 2);
+            
+            // Create GitHub Issue URL with pre-filled content
+            const issueTitle = encodeURIComponent('[DESIGN UPDATE] Neue Designs vom ' + new Date().toLocaleDateString('de-DE'));
+            const issueBody = encodeURIComponent(`<!-- Automatisch generiert vom Wallpaper Designer -->
+
+## 🎨 Design Update
+
+\`\`\`javascript
+${designsCode}
+\`\`\`
+
+<!-- GitHub Action wird dieses Issue automatisch verarbeiten -->`);
+            
+            const issueUrl = `https://github.com/${GITHUB_REPO}/issues/new?title=${issueTitle}&body=${issueBody}&labels=design-update`;
+            
+            // Open in new tab
+            window.open(issueUrl, '_blank');
+            
+            alert('✅ GitHub Issue-Seite wird geöffnet!\n\nKlicke dort einfach auf "Submit new issue" und die Designs werden automatisch aktualisiert.');
         }
 
         function downloadPreview() {
