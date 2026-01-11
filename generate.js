@@ -41,9 +41,9 @@ const DESIGNS = {
     "colors": {
       "background": "#1a1a1a",
       "pastDays": "#ffffff",
-      "today": "#60a5fa",
+      "today": "#ff69b4",
       "futureDays": "#404040",
-      "progressBar": "#60a5fa",
+      "progressBar": "#ff69b4",
       "progressBarBg": "#2d2d2d",
       "year": "#6b7280"
     },
@@ -53,7 +53,7 @@ const DESIGNS = {
       "columns": 21
     },
     "position": {
-      "verticalOffset": -50
+      "verticalOffset": 100
     },
     "progressBar": {
       "show": true,
@@ -83,7 +83,7 @@ const DESIGNS = {
       "columns": 21
     },
     "position": {
-      "verticalOffset": -50
+      "verticalOffset": 100
     },
     "progressBar": {
       "show": true,
@@ -113,7 +113,7 @@ const DESIGNS = {
       "columns": 21
     },
     "position": {
-      "verticalOffset": -50
+      "verticalOffset": 100
     },
     "progressBar": {
       "show": true,
@@ -143,7 +143,7 @@ const DESIGNS = {
       "columns": 21
     },
     "position": {
-      "verticalOffset": -50
+      "verticalOffset": 100
     },
     "progressBar": {
       "show": true,
@@ -173,7 +173,7 @@ const DESIGNS = {
       "columns": 21
     },
     "position": {
-      "verticalOffset": -30
+      "verticalOffset": 80
     },
     "progressBar": {
       "show": true,
