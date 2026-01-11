@@ -50,6 +50,9 @@
                 <h1 class="text-4xl font-bold">Wallpaper Designer</h1>
             </div>
             <div class="flex gap-3">
+                <button onclick="deleteCurrentDesign()" class="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg font-semibold">
+                    🗑️ Design löschen
+                </button>
                 <button onclick="addNewDesign()" class="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-semibold">
                     <span>+</span> Neues Design
                 </button>
@@ -146,8 +149,8 @@
                 </button>
             </div>
 
-            <!-- Preview Panel -->
-            <div class="bg-gray-800 rounded-2xl p-6 shadow-xl sticky top-6">
+            <!-- Preview Panel - Sticky -->
+            <div class="bg-gray-800 rounded-2xl p-6 shadow-xl h-fit" style="position: sticky; top: 24px;">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold flex items-center gap-2">
                         👁️ Live-Vorschau
@@ -187,7 +190,7 @@
                 name: 'Light & Minimalistic',
                 colors: { background: '#f5f5f0', pastDays: '#2d2d2d', today: '#4ade80', futureDays: '#d4d4d4', progressBar: '#4ade80', progressBarBg: '#e5e5e5', year: '#9ca3af' },
                 dots: { size: 14, spacing: 42, columns: 21 },
-                position: { verticalOffset: -50 },
+                position: { verticalOffset: 100 },
                 progressBar: { show: true, height: 4, distanceFromDots: 40 },
                 yearLabel: { show: true, fontSize: 32, distanceFromBar: 60 },
             },
@@ -372,8 +375,28 @@
         function addNewDesign() {
             const key = prompt('Design Key (z.B. "sunset"):');
             if (key && !designs[key]) {
-                designs[key] = { ...JSON.parse(JSON.stringify(currentConfig)), name: key };
+                const newDesign = JSON.parse(JSON.stringify(currentConfig));
+                newDesign.name = key;
+                designs[key] = newDesign;
+                renderDesignButtons();
                 loadDesign(key);
+            } else if (designs[key]) {
+                alert('⚠️ Ein Design mit diesem Namen existiert bereits!');
+            }
+        }
+
+        function deleteCurrentDesign() {
+            if (Object.keys(designs).length <= 1) {
+                alert('⚠️ Du kannst nicht das letzte Design löschen!');
+                return;
+            }
+            
+            const confirmDelete = confirm(`Möchtest du das Design "${designs[currentDesign].name}" wirklich löschen?`);
+            if (confirmDelete) {
+                delete designs[currentDesign];
+                const firstDesign = Object.keys(designs)[0];
+                loadDesign(firstDesign);
+                alert('✓ Design gelöscht!');
             }
         }
 
