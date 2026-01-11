@@ -1,0 +1,83 @@
+name: Update Designs from Issue
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  update-designs:
+    if: contains(github.event.issue.title, '[DESIGN UPDATE]')
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      issues: write
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      
+    - name: Extract design code from issue
+      id: extract
+      run: |
+        # Extract code block from issue body
+        ISSUE_BODY="${{ github.event.issue.body }}"
+        
+        # Find content between ```javascript and ```
+        CODE=$(echo "$ISSUE_BODY" | sed -n '/```javascript/,/```/p' | sed '1d;$d')
+        
+        # Save to file
+        echo "$CODE" > designs_temp.txt
+        
+    - name: Update generate.js
+      run: |
+        # Read the new designs code
+        NEW_DESIGNS=$(cat designs_temp.txt)
+        
+        # Create a temporary file with updated content
+        awk '
+          /^const DESIGNS = {/ { 
+            print
+            system("cat designs_temp.txt")
+            skip=1
+            next
+          }
+          /^};/ && skip { 
+            print
+            skip=0
+            next
+          }
+          !skip { print }
+        ' generate.js > generate_new.js
+        
+        # Replace old file
+        mv generate_new.js generate.js
+        rm designs_temp.txt
+        
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add generate.js
+        git commit -m "Update designs from issue #${{ github.event.issue.number }}"
+        git push
+        
+    - name: Trigger wallpaper generation
+      uses: peter-evans/repository-dispatch@v2
+      with:
+        event-type: generate-wallpapers
+        
+    - name: Close issue with success message
+      uses: peter-evans/close-issue@v3
+      with:
+        comment: |
+          ✅ **Designs erfolgreich aktualisiert!**
+          
+          Die neuen Designs wurden in `generate.js` gespeichert und die Wallpaper-Generierung wurde gestartet.
+          
+          In wenigen Minuten sind die neuen Wallpapers verfügbar unter:
+          ```
+          https://raw.githubusercontent.com/${{ github.repository }}/main/wallpaper-DESIGNNAME.png
+          ```
+          
+          🎨 Deine Änderungen sind live!
