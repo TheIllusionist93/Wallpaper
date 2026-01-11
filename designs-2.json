@@ -1,0 +1,182 @@
+{
+  "light": {
+    "name": "Light & Minimalistic",
+    "colors": {
+      "background": "#f5f5f0",
+      "pastDays": "#2d2d2d",
+      "today": "#4ade80",
+      "futureDays": "#d4d4d4",
+      "progressBar": "#4ade80",
+      "progressBarBg": "#e5e5e5",
+      "year": "#9ca3af"
+    },
+    "dots": {
+      "size": 14,
+      "spacing": 42,
+      "columns": 21
+    },
+    "position": {
+      "verticalOffset": 100
+    },
+    "progressBar": {
+      "show": true,
+      "height": 4,
+      "distanceFromDots": 40
+    },
+    "yearLabel": {
+      "show": true,
+      "fontSize": 32,
+      "distanceFromBar": 60
+    }
+  },
+  "dark": {
+    "name": "Dark Mode",
+    "colors": {
+      "background": "#1a1a1a",
+      "pastDays": "#ffffff",
+      "today": "#60a5fa",
+      "futureDays": "#404040",
+      "progressBar": "#60a5fa",
+      "progressBarBg": "#2d2d2d",
+      "year": "#6b7280"
+    },
+    "dots": {
+      "size": 14,
+      "spacing": 42,
+      "columns": 21
+    },
+    "position": {
+      "verticalOffset": -50
+    },
+    "progressBar": {
+      "show": true,
+      "height": 4,
+      "distanceFromDots": 40
+    },
+    "yearLabel": {
+      "show": true,
+      "fontSize": 32,
+      "distanceFromBar": 60
+    }
+  },
+  "pink": {
+    "name": "Pink Pastel",
+    "colors": {
+      "background": "#fff5f5",
+      "pastDays": "#4a5568",
+      "today": "#f472b6",
+      "futureDays": "#e5e7eb",
+      "progressBar": "#f472b6",
+      "progressBarBg": "#fce7f3",
+      "year": "#9ca3af"
+    },
+    "dots": {
+      "size": 14,
+      "spacing": 42,
+      "columns": 21
+    },
+    "position": {
+      "verticalOffset": -50
+    },
+    "progressBar": {
+      "show": true,
+      "height": 4,
+      "distanceFromDots": 40
+    },
+    "yearLabel": {
+      "show": true,
+      "fontSize": 32,
+      "distanceFromBar": 60
+    }
+  },
+  "ocean": {
+    "name": "Ocean Blue",
+    "colors": {
+      "background": "#f0f9ff",
+      "pastDays": "#1e3a8a",
+      "today": "#0ea5e9",
+      "futureDays": "#bfdbfe",
+      "progressBar": "#0ea5e9",
+      "progressBarBg": "#dbeafe",
+      "year": "#64748b"
+    },
+    "dots": {
+      "size": 14,
+      "spacing": 42,
+      "columns": 21
+    },
+    "position": {
+      "verticalOffset": -50
+    },
+    "progressBar": {
+      "show": true,
+      "height": 4,
+      "distanceFromDots": 40
+    },
+    "yearLabel": {
+      "show": true,
+      "fontSize": 32,
+      "distanceFromBar": 60
+    }
+  },
+  "minimal": {
+    "name": "Pure Black & White",
+    "colors": {
+      "background": "#ffffff",
+      "pastDays": "#000000",
+      "today": "#ef4444",
+      "futureDays": "#e5e5e5",
+      "progressBar": "#000000",
+      "progressBarBg": "#f3f4f6",
+      "year": "#9ca3af"
+    },
+    "dots": {
+      "size": 14,
+      "spacing": 42,
+      "columns": 21
+    },
+    "position": {
+      "verticalOffset": -50
+    },
+    "progressBar": {
+      "show": true,
+      "height": 4,
+      "distanceFromDots": 40
+    },
+    "yearLabel": {
+      "show": true,
+      "fontSize": 32,
+      "distanceFromBar": 60
+    }
+  },
+  "compact": {
+    "name": "Compact",
+    "colors": {
+      "background": "#fafaf9",
+      "pastDays": "#292524",
+      "today": "#22c55e",
+      "futureDays": "#d6d3d1",
+      "progressBar": "#22c55e",
+      "progressBarBg": "#e7e5e4",
+      "year": "#78716c"
+    },
+    "dots": {
+      "size": 12,
+      "spacing": 38,
+      "columns": 21
+    },
+    "position": {
+      "verticalOffset": -30
+    },
+    "progressBar": {
+      "show": true,
+      "height": 3,
+      "distanceFromDots": 35
+    },
+    "yearLabel": {
+      "show": true,
+      "fontSize": 28,
+      "distanceFromBar": 50
+    }
+  }
+}
