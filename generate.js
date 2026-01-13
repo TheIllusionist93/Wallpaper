@@ -41,9 +41,9 @@ const DESIGNS = {
     "colors": {
       "background": "#1a1a1a",
       "pastDays": "#ffffff",
-      "today": "#ff69b4",
+      "today": "#60a5fa",
       "futureDays": "#404040",
-      "progressBar": "#ff69b4",
+      "progressBar": "#60a5fa",
       "progressBarBg": "#2d2d2d",
       "year": "#6b7280"
     },
@@ -168,21 +168,21 @@ const DESIGNS = {
       "year": "#78716c"
     },
     "dots": {
-      "size": 12,
-      "spacing": 38,
-      "columns": 21
+      "size": 24,
+      "spacing": 60,
+      "columns": 15
     },
     "position": {
-      "verticalOffset": 80
+      "verticalOffset": 200
     },
     "progressBar": {
       "show": true,
-      "height": 3,
-      "distanceFromDots": 35
+      "height": 10,
+      "distanceFromDots": 53
     },
     "yearLabel": {
       "show": true,
-      "fontSize": 28,
+      "fontSize": 50,
       "distanceFromBar": 50
     }
   }
